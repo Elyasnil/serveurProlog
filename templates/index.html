@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Detective - Interface Prolog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #64748b;
+            --success: #10b981;
+            --error: #ef4444;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --tab-active: #3b82f6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--surface);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .tab-container {
+            background: var(--surface);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .tab-nav {
+            display: flex;
+            background: #f1f5f9;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button:hover {
+            background: #e2e8f0;
+            color: var(--text);
+        }
+
+        .tab-button.active {
+            background: var(--surface);
+            color: var(--tab-active);
+            border-bottom-color: var(--tab-active);
+        }
+
+        .tab-content {
+            padding: 2rem;
+            min-height: 500px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface);
+            color: var(--text);
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #f1f5f9;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .history-item:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .history-query {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .history-time {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .status-bar {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .status-online {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-offline {
+            background: var(--error);
+            color: white;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .result-guilty {
+            text-align: center;
+            padding: 2rem;
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .result-innocent {
+            text-align: center;
+            padding: 2rem;
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-guilty .result-title {
+            color: var(--error);
+        }
+
+        .result-innocent .result-title {
+            color: var(--success);
+        }
+
+        .result-details {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-top: 1rem;
+        }
+
+        .result-details pre {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text);
+            overflow-x: auto;
+        }
+
+        .error-result {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 1rem;
+            color: var(--error);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .tab-nav {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                text-align: left;
+                border-bottom: none;
+                border-left: 3px solid transparent;
+            }
+
+            .tab-button.active {
+                border-left-color: var(--tab-active);
+                border-bottom-color: transparent;
+            }
+
+            .tab-content {
+                padding: 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .modal {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Crime Detective</h1>
+            <p>Interface Prolog pour l'analyse criminelle</p>
+        </header>
+
+        <div class="tab-container">
+            <nav class="tab-nav">
+                <button class="tab-button active" data-tab="query">Vérification</button>
+                <button class="tab-button" data-tab="history">Historique</button>
+            </nav>
+
+            <div class="tab-content">
+                <div class="tab-panel active" id="query-panel">
+                    <form id="crimeForm">
+                        <div class="form-group">
+                            <label for="suspect" class="form-label">Suspect :</label>
+                            <select id="suspect" name="suspect" class="form-select">
+                                <option value="john">John</option>
+                                <option value="mary">Mary</option>
+                                <option value="alice">Alice</option>
+                                <option value="bruno">Bruno</option>
+                                <option value="sophie">Sophie</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="crime_type" class="form-label">Type de crime :</label>
+                            <select id="crime_type" name="crime_type" class="form-select">
+                                <option value="vol">Vol</option>
+                                <option value="assassinat">Assassinat</option>
+                                <option value="escroquerie">Escroquerie</option>
+                            </select>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button type="button" class="btn btn-primary" id="checkBtn" onclick="checkGuilt()">
+                                Vérifier la culpabilité
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="testBtn">
+                                Test Serveur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tab-panel" id="history-panel">
+                    <div id="history">
+                        <div class="empty-state">
+                            <p>Aucune vérification dans l'historique</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour les résultats -->
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Résultat</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Contenu du résultat -->
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+        <span id="statusText">Connexion...</span>
+    </div>
+
+    <script>
+        class CrimeDetectiveInterface {
+            constructor() {
+                this.serverUrl = 'http://127.0.0.1:5000';
+                this.history = this.loadHistory();
+                this.isConnected = false;
+                this.activeTab = 'query';
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.checkServerStatus();
+                this.renderHistory();
+                
+                // Vérification périodique de la connexion
+                setInterval(() => this.checkServerStatus(), 30000);
+            }
+
+            bindEvents() {
+                // Gestion des tabs
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.switchTab(e.target.dataset.tab);
+                    });
+                });
+
+                // Boutons
+                document.getElementById('testBtn').addEventListener('click', () => {
+                    this.testServer();
+                });
+
+                // Historique - clic pour réutiliser une vérification
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.history-item')) {
+                        const data = JSON.parse(e.target.closest('.history-item').dataset.query);
+                        document.getElementById('suspect').value = data.suspect;
+                        document.getElementById('crime_type').value = data.crime_type;
+                        this.switchTab('query');
+                    }
+                });
+
+                // Modal - fermeture
+                document.addEventListener('click', (e) => {
+                    if (e.target === document.getElementById('resultModal')) {
+                        this.closeModal();
+                    }
+                });
+
+                // Raccourcis clavier
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 'Enter') {
+                        e.preventDefault();
+                        this.checkGuilt();
+                    }
+                    if (e.key === 'Escape') {
+                        this.closeModal();
+                    }
+                });
+            }
+
+            switchTab(tabName) {
+                // Désactiver tous les boutons et panneaux
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+                
+                // Activer le tab sélectionné
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                document.getElementById(`${tabName}-panel`).classList.add('active');
+                
+                this.activeTab = tabName;
+            }
+
+            async checkServerStatus() {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 12000);
+                    
+                    const response = await fetch(`${this.serverUrl}/health`, {
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (response.ok) {
+                        this.isConnected = true;
+                        this.showStatus('Serveur en ligne', 'online');
+                    } else {
+                        throw new Error('Serveur inaccessible');
+                    }
+                } catch (error) {
+                    this.isConnected = false;
+                    this.showStatus('Serveur hors ligne', 'offline');
+                }
+            }
+
+            showStatus(message, type) {
+                const statusBar = document.getElementById('statusBar');
+                const text = document.getElementById('statusText');
+                
+                text.textContent = message;
+                statusBar.className = `status-bar status-${type}`;
+            }
+
+            async checkGuilt() {
+                const suspect = document.getElementById('suspect').value;
+                const crimeType = document.getElementById('crime_type').value;
+
+                if (!this.isConnected) {
+                    this.showModal('Erreur de connexion', 
+                        '<div class="error-result">Serveur non disponible. Veuillez réessayer plus tard.</div>');
+                    return;
+                }
+
+                this.showLoadingModal();
+                this.addToHistory({ suspect, crime_type: crimeType });
+
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+                    const response = await fetch(`${this.serverUrl}/query`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            query: `is_guilty(${suspect}, ${crimeType})`
+                        }),
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.displayResultModal(suspect, crimeType, data, true);
+                    } else {
+                        this.displayResultModal(suspect, crimeType, data, false);
+                    }
+
+                } catch (error) {
+                    let errorData = { error: 'Erreur de connexion au serveur' };
+                    if (error.name === 'AbortError') {
+                        errorData = { error: 'Timeout - La vérification a pris trop de temps' };
+                    }
+                    this.displayResultModal(suspect, crimeType, errorData, false);
+                }
+            }
+
+            async testServer() {
+                if (!this.isConnected) {
+                    this.showModal('Test Serveur', 
+                        '<div class="error-result">Serveur non disponible</div>');
+                    return;
+                }
+
+                this.showLoadingModal();
+                
+                try {
+                    const response = await fetch(`${this.serverUrl}/test`);
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.showModal('Test Serveur - Succès', 
+                            `<div class="result-details"><pre>${JSON.stringify(data, null, 2)}</pre></div>`);
+                    } else {
+                        this.showModal('Test Serveur - Erreur', 
+                            `<div class="error-result">${data.error || 'Erreur inconnue'}</div>`);
+                    }
+                } catch (error) {
+                    this.showModal('Test Serveur - Erreur', 
+                        '<div class="error-result">Impossible de tester le serveur</div>');
+                }
+            }
+
+            showLoadingModal() {
+                this.showModal('Vérification en cours...', 
+                    '<div style="text-align: center; padding: 2rem;"><span class="loading-spinner"></span>Analyse en cours...</div>');
+            }
+
+            displayResultModal(suspect, crimeType, data, success) {
+                let title = `Résultat: ${suspect} - ${crimeType}`;
+                let content = '';
+
+                if (success && data.result) {
+                    const isGuilty = data.result.toLowerCase().includes('true');
+                    
+                    if (isGuilty) {
+                        content = `
+                            <div class="result-guilty">
+                                <div class="result-title">COUPABLE</div>
+                                <p>Le suspect ${suspect} est coupable du crime de ${crimeType}</p>
+                            </div>
+                        `;
+                    } else {
+                        content = `
+                            <div class="result-innocent">
+                                <div class="result-title">INNOCENT</div>
+                                <p>Le suspect ${suspect} est innocent du crime de ${crimeType}</p>
+                            </div>
+                        `;
+                    }
+                } else if (success) {
+                    content = `<div class="result-details"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                } else {
+                    content = `
+                        <div class="error-result">
+                            <strong>Erreur:</strong> ${data.error || 'Erreur inconnue'}
+                        </div>
+                    `;
+                }
+
+                this.showModal(title, content);
+            }
+
+            showModal(title, content) {
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalBody').innerHTML = content;
+                document.getElementById('resultModal').classList.add('show');
+            }
+
+            closeModal() {
+                document.getElementById('resultModal').classList.remove('show');
+            }
+
+            addToHistory(queryData) {
+                const historyItem = {
+                    query: JSON.stringify(queryData),
+                    display: `${queryData.suspect} - ${queryData.crime_type}`,
+                    timestamp: new Date().toLocaleString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                };
+                
+                // Éviter les doublons récents
+                if (this.history.length > 0 && this.history[0].display === historyItem.display) {
+                    return;
+                }
+                
+                this.history.unshift(historyItem);
+                this.history = this.history.slice(0, 20);
+                
+                this.saveHistory();
+                this.renderHistory();
+            }
+
+            loadHistory() {
+                try {
+                    const saved = localStorage.getItem('crimeDetectiveHistory');
+                    return saved ? JSON.parse(saved) : [];
+                } catch (error) {
+                    return [];
+                }
+            }
+
+            saveHistory() {
+                try {
+                    localStorage.setItem('crimeDetectiveHistory', JSON.stringify(this.history));
+                } catch (error) {
+                    console.error('Erreur lors de la sauvegarde de l\'historique:', error);
+                }
+            }
+
+            renderHistory() {
+                const historyDiv = document.getElementById('history');
+                
+                if (this.history.length === 0) {
+                    historyDiv.innerHTML = '<div class="empty-state"><p>Aucune vérification dans l\'historique</p></div>';
+                    return;
+                }
+
+                const historyHtml = this.history.map(item => `
+                    <div class="history-item" data-query="${this.escapeHtml(item.query)}" title="Cliquer pour réutiliser cette vérification">
+                        <div class="history-query">${this.escapeHtml(item.display)}</div>
+                        <div class="history-time">${this.escapeHtml(item.timestamp)}</div>
+                    </div>
+                `).join('');
+
+                historyDiv.innerHTML = `<div class="history-list">${historyHtml}</div>`;
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Fonctions globales
+        async function checkGuilt() {
+            if (window.crimeApp) {
+                await window.crimeApp.checkGuilt();
+            }
+        }
+
+        function closeModal() {
+            if (window.crimeApp) {
+                window.crimeApp.closeModal();
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            window.crimeApp = new CrimeDetectiveInterface();
+        });
+    </script>
+</body>
+</html>
